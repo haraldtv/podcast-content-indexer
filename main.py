@@ -4,6 +4,9 @@ from whoosh.qparser import QueryParser
 from whoosh import index
 import os.path
 
+from worddistance import stringproximity
+import string
+
 import sys
 
 def howtouse():
@@ -47,6 +50,28 @@ if ((len(sys.argv) == 3) and (sys.argv[1] == "search")):
         for i in results:
             print(i["title"], end=" - ")
             print("Matched:", i.matched_terms)
+
+
+if ((len(sys.argv) == 3) and (sys.argv[1] == "proxsearch")):
+    ix = index.open_dir("indexdir")
+    with ix.searcher() as searcher:
+        query = QueryParser("content", ix.schema).parse(sys.argv[2])
+        results = searcher.search(query, terms=True)
+
+        for i in results:
+            print(i["title"], end=" - ")
+            print("Matched:", i.matched_terms)
+        print(len(results))
+
+        DISTLIMIT = 30
+        max = 0
+        for i in results:
+            with open((i["title"] + "/" + i["title"] + ".txt"), "r") as file:
+                doc = file.read().replace("\n", " ")
+            max = stringproximity(doc, sys.argv[2])
+            print("Maxdistance - " + i["title"]+": "+str(max))
+
+
 
 if ((len(sys.argv) == 2) and (sys.argv[1] == "index")):
     with open("2024-2-21/2024-2-21.txt", 'r') as file:
