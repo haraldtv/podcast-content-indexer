@@ -2,7 +2,7 @@
 //  Compile: gcc -fPIC -shared -o indexer.so indexer.c
 //
 
-#define TABLESIZE 30000
+#define TABLESIZE 3000
 #define EPISODETOTAL 3
 
 #include <stdio.h>
@@ -45,8 +45,8 @@ void createIndex(char *filename, int words, int episodes) {
     fclose(fptr);
 }
 
-void addElement(char *filename, int word, int episode) {
-    int index = (((word-1)*EPISODETOTAL) + (episode));
+void addElement(char *filename, int word, int episode, int episode_total) {
+    int index = (((word-1)*episode_total) + (episode));
 
     FILE *fptro, *fptrn;
     fptro = fopen(filename, "r");
@@ -70,17 +70,17 @@ void addElement(char *filename, int word, int episode) {
     rename("temp", filename);
 }
 
-bool getElement(char *filename, int word, int episode) {
+bool getElement(char *filename, int word, int episode, int episode_total) {
     FILE *fptr;
     fptr = fopen(filename, "r");
-    int index = (((word-1)*EPISODETOTAL) + (episode));
+    int index = (((word-1)*episode_total) + (episode));
     fseek(fptr, index-1, SEEK_SET);
     bool temp = (fgetc(fptr) == '1');
     fclose(fptr);
     return temp;
 }
 
-void indexFile(char *indexfile, char *filename, int episode) {
+void indexFile(char *indexfile, char *filename, int episode, int episode_total) {
     FILE *fptr;
     fptr = fopen(filename, "r");
     char buffer[20];
@@ -91,7 +91,7 @@ void indexFile(char *indexfile, char *filename, int episode) {
         if (tmpx == ' ') {
             buffer[i] = '\0';
             //printf("%s: %ld\n", buffer, getIndex(buffer));
-            addElement(indexfile, getIndex(buffer), episode);
+            addElement(indexfile, getIndex(buffer), episode, episode_total);
             i = 0;
         }
         else {
@@ -103,23 +103,102 @@ void indexFile(char *indexfile, char *filename, int episode) {
     fclose(fptr);
 }
 
+// Fills retarr with the episode numbers which contain the word
+void searchWord(char *indexFile, char *word, int *retarr, int episode_total) {
+    int i;
+    int j = 0;
+    for (i=0;i<episode_total;i++) {
+        if (getElement(indexFile, getIndex(word), i, episode_total)) {
+            retarr[j] = i;
+            j++;
+            if (j>8) {
+                retarr[j] = -1;
+                return;
+            }
+            printf("Found %s in episode: %d\n", word, i);
+        }
+    }
+    if (j>0) {
+                retarr[j] = -1;
+                return;
+            }
+    retarr[0] = -1;
+    return;
+}
+
+int wordProximity(char *textfile, char *a, char *b) {
+    if (strcmp(a, b))
+        return 0;
+    int dist = strlen(textfile);
+    int textlen = dist;
+    int i;
+    for (i=0; i<textlen; i++) {
+        // !(a and b) == (!a) or (!b)
+        // TODO: Have to check which one is best for optimizing later (compiler probably solves this anyway)
+        if(!( (strcmp(a, b)) && (strcmp(a,b))))
+            printf("test");
+    }
+}
+
+void printSearchresults(int *retarr) {
+    int tmp;
+    int i;
+    for (i=0; (tmp = retarr[i]) != -1; i++) {
+        printf("%d - ", tmp);
+    }
+}
+
+void pythonsearch(int *retarr, int arrsize, char *indexFile, char *word, int episode_total) {
+    printf("pythonsearch()\n");
+    int i;
+    int j = 0;
+    for (i=0;i<episode_total;i++) {
+        //printf("Loopitr %d\n", i);
+        if (getElement(indexFile, getIndex(word), i, episode_total)) {
+            retarr[j] = i;
+            if (j>=(arrsize-1)) {
+                retarr[j] = -1;
+                return;
+            }
+            j++;
+            
+            //printf("Found %s in episode: %d\n", word, i);
+        }
+    }
+    if (j>0) {
+                retarr[j] = -1;
+                return;
+            }
+    retarr[0] = -1;
+    //searchWord(indexFile, word, retarr);
+    //printSearchresults(retarr);
+    return;
+    
+}
+
 int main() {
     char *name = "index.i";
     //createIndex(name, TABLESIZE, EPISODETOTAL);
-    // addElement("index.i", 2, 1);
+    //addElement("index.i", 2, 1, EPISODETOTAL);
     
-    //indexFile("index.i", "2024-2-16.txt", 2);
-    //indexFile("index.i", "2024-2-6.txt", 1);
-    printf("----\n");
-    printf("%d\n", getElement(name, getIndex("memory"), 2));
-    printf("%d\n", getElement(name, getIndex("is"), 2));
-    printf("%d\n", getElement(name, getIndex("so"), 2));
-    printf("%d\n", getElement(name, getIndex("tables"), 2));
-    printf("----\n");
-    printf("%ld\n", getIndex("this"));
-    printf("%ld\n", getIndex("test"));
-    printf("%ld\n", getIndex("kongen"));
-    printf("%ld\n", getIndex("memory"));
+    // indexFile("index.i", "2024-2-16.txt", 2, EPISODETOTAL);
+    // indexFile("index.i", "2024-2-6.txt", 1);
+    // printf("----\n");
+    printf("%d\n", getElement(name, getIndex("elizabeth"), 2, EPISODETOTAL));
+    // printf("%d\n", getElement(name, getIndex("is"), 2));
+    // printf("%d\n", getElement(name, getIndex("so"), 2));
+    // printf("%d\n", getElement(name, getIndex("tables"), 2));
+    // printf("----\n");
+    // printf("%ld\n", getIndex("this"));
+    // printf("%ld\n", getIndex("test"));
+    // printf("%ld\n", getIndex("kongen"));
+    // printf("%ld\n", getIndex("memory"));
+    // printf("----\n");
+    int retarr[10];
+    //searchWord(name, "elizabeth", retarr, EPISODETOTAL);
+    pythonsearch(retarr, 10, name, "elizabeth", EPISODETOTAL);
+    
+    printSearchresults(retarr);
     
     return 0;
 }
