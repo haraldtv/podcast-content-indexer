@@ -2,7 +2,7 @@
 //  Compile: gcc -fPIC -shared -o indexer.so indexer.c
 //
 
-#define TABLESIZE 10
+#define TABLESIZE 30000
 #define EPISODETOTAL 3
 
 #include <stdio.h>
@@ -89,32 +89,37 @@ void indexFile(char *indexfile, char *filename, int episode) {
     while ((tmpx = fgetc(fptr)) != EOF) {
         
         if (tmpx == ' ') {
-            buffer[i+1] = '\0';
-            printf("%s\n", buffer);
+            buffer[i] = '\0';
+            //printf("%s: %ld\n", buffer, getIndex(buffer));
             addElement(indexfile, getIndex(buffer), episode);
             i = 0;
         }
-        else 
+        else {
             buffer[i] = tmpx;
+            i++;
+        }
+        //printf("c: %c\n", tmpx);
     }
     fclose(fptr);
 }
 
 int main() {
     char *name = "index.i";
-    createIndex(name, TABLESIZE, EPISODETOTAL);
+    //createIndex(name, TABLESIZE, EPISODETOTAL);
     // addElement("index.i", 2, 1);
     
-    indexFile("index.i", "testtext.txt", 2);
-    printf("%d\n", getElement(name, getIndex("this"), 1));
-    printf("%d\n", getElement(name, getIndex("test"), 1));
-    printf("%d\n", getElement(name, getIndex("oslo"), 1));
-    printf("%d\n", getElement(name, getIndex("gate"), 1));
+    //indexFile("index.i", "2024-2-16.txt", 2);
+    //indexFile("index.i", "2024-2-6.txt", 1);
+    printf("----\n");
+    printf("%d\n", getElement(name, getIndex("memory"), 2));
+    printf("%d\n", getElement(name, getIndex("is"), 2));
+    printf("%d\n", getElement(name, getIndex("so"), 2));
+    printf("%d\n", getElement(name, getIndex("tables"), 2));
     printf("----\n");
     printf("%ld\n", getIndex("this"));
     printf("%ld\n", getIndex("test"));
-    printf("%ld\n", getIndex("oslo"));
-    printf("%ld\n", getIndex("gate"));
+    printf("%ld\n", getIndex("kongen"));
+    printf("%ld\n", getIndex("memory"));
     
     return 0;
 }
