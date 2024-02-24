@@ -9,7 +9,6 @@ def searchWord(word, indexname, reslen):
     miscfile = open(indexname+".misc", "r")
     totalepisodes = int(miscfile.read().split()[1])
     miscfile.close()
-    print(totalepisodes)
     indexlib = ctypes.CDLL("./src/indexer.so")
     charptr = ctypes.POINTER(ctypes.c_char)
     #filename = ctypes.c_char * 
@@ -40,10 +39,9 @@ def indexFile(filename, indexname, episode):
     miscfile = open(indexname+".misc", "r")
     totalepisodes = int(miscfile.read().split()[1])
     miscfile.close()
-    print(totalepisodes)
     indexlib.indexFile(indexname.encode('UTF-8'), filename.encode('UTF-8'), episode, totalepisodes)
 
 #createIndex("intest1.i", WORDS, EPISODES)
 #indexFile("2024-2-6.txt", "intest1.i", 1)
 #indexFile("2024-2-16.txt", "intest1.i", 2)
-print(searchWord("elizabeth", "intest1.i", 10))
+#print(searchWord("elizabeth", "intest1.i", 10))

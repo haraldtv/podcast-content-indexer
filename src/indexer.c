@@ -149,7 +149,7 @@ void printSearchresults(int *retarr) {
 }
 
 void pythonsearch(int *retarr, int arrsize, char *indexFile, char *word, int episode_total) {
-    printf("pythonsearch()\n");
+    //printf("pythonsearch()\n");
     int i;
     int j = 0;
     for (i=0;i<episode_total;i++) {
