@@ -6,7 +6,7 @@ import sys
 import indexer
 import time
 import pickle
-
+from transcribe import transcribe
 # main.py createindex {indexname}
 if ((len(sys.argv) == 3) and (sys.argv[1] == "createindex")):
     if not(os.path.isdir("./oneline")):
@@ -45,6 +45,8 @@ if ((len(sys.argv) == 3) and (sys.argv[1] == "createindex")):
         tempfile.close()
 
         numberass[indx] = filename
+        # Future improvement:
+        # Don't alter the original file and rename it, use the temp file created for all indexing purposes
         os.rename(("./oneline/"+filename), "./oneline/"+str(indx))
         print("Indexing: " + filename + " " + str(indx))
         indexer.indexFile("./indextemp/tmp", sys.argv[2], (indx))
@@ -53,16 +55,16 @@ if ((len(sys.argv) == 3) and (sys.argv[1] == "createindex")):
     with open(sys.argv[2]+".ass", "wb") as assfile:
         pickle.dump(numberass, assfile)
 
-if ((len(sys.argv) == 4) and (sys.argv[1] == "searchword")):
+elif ((len(sys.argv) == 4) and (sys.argv[1] == "searchword")):
     start = time.time()
     print(indexer.searchWord(sys.argv[2], sys.argv[3], 10))
     end = time.time()
     print(end-start)
 
-if ((len(sys.argv) == 4) and (sys.argv[1] == "searchmultiple")):
+elif ((len(sys.argv) == 4) and (sys.argv[1] == "searchmultiple")):
     print(indexer.searchMulti(sys.argv[3], sys.argv[2], 10))
 
-if ((len(sys.argv) == 4) and (sys.argv[1] == "searchprox")):
+elif ((len(sys.argv) == 4) and (sys.argv[1] == "searchprox")):
     filelist = indexer.searchMulti(sys.argv[3], sys.argv[2], 10)
     maxlist = []
     for fi in filelist:
@@ -75,6 +77,20 @@ if ((len(sys.argv) == 4) and (sys.argv[1] == "searchprox")):
         assdict = pickle.load(assfile)
     print([assdict[i[1]] for i in maxlist])
 
+elif ((len(sys.argv) == 2) and (sys.argv[1] == "transcribe")):
+    if (not(os.path.isdir("./audiofiles"))):
+        print("Could not find source files. Make sure they are in a folder called 'audiofiles'")
+        quit()
+    print("WARNING: This will transcribe every audiofile in the audiofiles dir, which could use a lot of resources")
+    if not(input("Are you sure? y/n: ") == "y"):
+        quit()
+    dir = os.fsencode("audiofiles")
+    for file in os.listdir(dir):
+        transcribe(os.fsdecode(file))
+
+else:
+    print("Invalid syntax")
+    quit()
 
 # start = time.time()
 # tempfile = open("2024-2-16.txt", "r")

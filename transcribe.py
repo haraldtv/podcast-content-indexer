@@ -7,3 +7,6 @@ def transcribe(filename):
         print("Error: \".audiofiles\" does not exist")
     model = whisper.load_model("base.en")
     result = model.transcribe(filename, verbose=True)
+    with open(os.path.splitext(filename)[0]+".txt", "w") as resultfile:
+        resultfile.write(result["text"])
+    
