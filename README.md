@@ -34,28 +34,22 @@ The most important steps at the moment are automating the transcription process 
 > python3 main.py [arguments]
 
 ### Arguments
-struct
-> python3 main.py struct
+createindex
+> python3 main.py createindex "indexname"
 
-Initializes required folders if they don't already exist
-
----
-
-init
-> python3 main.py init
-
-Creates required folder structure in ./transcribedata for every episode placed in ./rawepisodes
+Indexes all the text files in the oneline dir (these will be altered, so make sure to keep another copy somewhere else)
 
 ---
 
-index
-> python3 main.py index
+searchword
+> python3 main.py searchword "word" "indexname"
 
-Creates a searchable index of every transcribed episode from the ./transcribedtxt folder. Requires the user to create the ./indexdir folder first
+Searches for a single word in the index
 
 ---
 
-search
-> python3 main.py search "search queries here"
+searchprox
+> python3 main.py searchprox "queries to search" "indexname
 
-Searches the index for the given search query/queries. Requires there to be an index generated
+Prints a list of all the files in which all the queries were found, and the maxdistance(see worddistance.py) of every pair words of the query
+
