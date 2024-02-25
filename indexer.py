@@ -41,6 +41,15 @@ def indexFile(filename, indexname, episode):
     miscfile.close()
     indexlib.indexFile(indexname.encode('UTF-8'), filename.encode('UTF-8'), episode, totalepisodes)
 
+def searchMulti(indexname, words, reslen):
+    words = words.split()
+    contains = set(searchWord(str(words[0]), indexname, 10))
+    words.pop(0)
+    for word in words:
+        contains.intersection_update(set(searchWord(str(word), indexname, reslen)))
+    return list(contains)
+    
+
 # createIndex("findex.i", WORDS, EPISODES)
 # indexFile("./oneline/2024-2-6.txt", "intest1.i", 1)
 # indexFile("./oneline/2024-2-9.txt", "intest1.i", 2)

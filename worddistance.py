@@ -2,9 +2,9 @@ from itertools import combinations
 import string
 
 def wordproximity(str, a, b):
-    str = str.lower()
-    for punctuation in string.punctuation:
-        str = str.replace(punctuation, '')
+    # str = str.lower()
+    # for punctuation in string.punctuation:
+    #     str = str.replace(punctuation, '')
     if (a == b):
         return 0
     str = str.split()
