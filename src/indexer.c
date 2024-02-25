@@ -2,8 +2,8 @@
 //  Compile: gcc -fPIC -shared -o indexer.so indexer.c
 //
 
-#define TABLESIZE 3000
-#define EPISODETOTAL 3
+#define TABLESIZE 10000
+#define EPISODETOTAL 5
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +23,7 @@ unsigned long hash(char *str) {
 }
 
 unsigned long getIndex(char *str) {
-    unsigned long index = (hash(str) % TABLESIZE) + 1;
+    unsigned long index = (hash(str) % TABLESIZE)+1;
     return index;
 }
 
@@ -74,7 +74,8 @@ bool getElement(char *filename, int word, int episode, int episode_total) {
     FILE *fptr;
     fptr = fopen(filename, "r");
     int index = (((word-1)*episode_total) + (episode));
-    fseek(fptr, index-1, SEEK_SET);
+    // should probably be index not (index-1)
+    fseek(fptr, (index-1), SEEK_SET);
     bool temp = (fgetc(fptr) == '1');
     fclose(fptr);
     return temp;
@@ -91,6 +92,7 @@ void indexFile(char *indexfile, char *filename, int episode, int episode_total) 
         if (tmpx == ' ') {
             buffer[i] = '\0';
             //printf("%s: %ld\n", buffer, getIndex(buffer));
+            // Change buffer)-1
             addElement(indexfile, getIndex(buffer), episode, episode_total);
             i = 0;
         }
@@ -109,7 +111,7 @@ void searchWord(char *indexFile, char *word, int *retarr, int episode_total) {
     int j = 0;
     for (i=0;i<episode_total;i++) {
         if (getElement(indexFile, getIndex(word), i, episode_total)) {
-            retarr[j] = i;
+            retarr[j] = (i+1);
             j++;
             if (j>8) {
                 retarr[j] = -1;
@@ -152,10 +154,11 @@ void pythonsearch(int *retarr, int arrsize, char *indexFile, char *word, int epi
     //printf("pythonsearch()\n");
     int i;
     int j = 0;
-    for (i=0;i<episode_total;i++) {
+    for (i=1;i<=episode_total;i++) {
         //printf("Loopitr %d\n", i);
         if (getElement(indexFile, getIndex(word), i, episode_total)) {
-            retarr[j] = i;
+            retarr[j] = (i);
+            
             if (j>=(arrsize-1)) {
                 retarr[j] = -1;
                 return;
@@ -175,16 +178,33 @@ void pythonsearch(int *retarr, int arrsize, char *indexFile, char *word, int epi
     return;
     
 }
-
+/*
 int main() {
     char *name = "index.i";
-    //createIndex(name, TABLESIZE, EPISODETOTAL);
-    //addElement("index.i", 2, 1, EPISODETOTAL);
     
-    // indexFile("index.i", "2024-2-16.txt", 2, EPISODETOTAL);
-    // indexFile("index.i", "2024-2-6.txt", 1);
+    //addElement("index.i", getIndex("elizabeth"), 1, EPISODETOTAL);
+    //printf("%d\n", getElement(name, 2, 2, EPISODETOTAL));
+    
+    // createIndex(name, TABLESIZE, EPISODETOTAL);
+    // printf("Indexing\n");
+    // indexFile("index.i", "../oneline_backup/2024-2-6.txt", 1, EPISODETOTAL);
+    // printf("Indexing\n");
+    // indexFile("index.i", "../oneline_backup/2024-2-9.txt", 2, EPISODETOTAL);
+    // printf("Indexing\n");
+    // indexFile("index.i", "../oneline_backup/2024-2-13.txt", 3, EPISODETOTAL);
+    // printf("Indexing\n");
+    // indexFile("index.i", "../oneline_backup/2024-2-16.txt", 4, EPISODETOTAL);
+    // printf("Indexing\n");
+    // indexFile("index.i", "../oneline_backup/2024-2-21.txt", 5, EPISODETOTAL);
     // printf("----\n");
-    printf("%d\n", getElement(name, getIndex("elizabeth"), 2, EPISODETOTAL));
+    printf("%d\n", getElement(name, getIndex("eliabeth"), 1, EPISODETOTAL));
+    printf("%d\n", getElement(name, getIndex("eliabeth"), 2, EPISODETOTAL));
+    printf("%d\n", getElement(name, getIndex("eliabeth"), 3, EPISODETOTAL));
+    printf("%d\n", getElement(name, getIndex("eliabeth"), 4, EPISODETOTAL));
+    printf("%d\n", getElement(name, getIndex("eliabeth"), 5, EPISODETOTAL));
+    printf("----\n");
+    printf("%ld\n", getIndex("elizabeth"));
+    printf("%d\n", getElement(name, 7726, 1, EPISODETOTAL));
     // printf("%d\n", getElement(name, getIndex("is"), 2));
     // printf("%d\n", getElement(name, getIndex("so"), 2));
     // printf("%d\n", getElement(name, getIndex("tables"), 2));
@@ -194,14 +214,13 @@ int main() {
     // printf("%ld\n", getIndex("kongen"));
     // printf("%ld\n", getIndex("memory"));
     // printf("----\n");
-    int retarr[10];
-    //searchWord(name, "elizabeth", retarr, EPISODETOTAL);
-    pythonsearch(retarr, 10, name, "elizabeth", EPISODETOTAL);
-    
+    int retarr[10] = {10,10,10,10,10,10,10,10,10,10};
+    //searchWord(name, "elizabeth", retarr, 5);
+    pythonsearch(retarr, 10, name, "elizabeth", 5);
     printSearchresults(retarr);
     
     return 0;
-}
+}*/
 
 
 //  - Old Functions -

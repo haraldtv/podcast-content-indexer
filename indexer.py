@@ -2,8 +2,8 @@
 import ctypes
 import time
 
-WORDS = 30000
-EPISODES = 3
+WORDS = 10000
+EPISODES = 5
 
 def searchWord(word, indexname, reslen):
     miscfile = open(indexname+".misc", "r")
@@ -41,7 +41,10 @@ def indexFile(filename, indexname, episode):
     miscfile.close()
     indexlib.indexFile(indexname.encode('UTF-8'), filename.encode('UTF-8'), episode, totalepisodes)
 
-#createIndex("intest1.i", WORDS, EPISODES)
-#indexFile("2024-2-6.txt", "intest1.i", 1)
-#indexFile("2024-2-16.txt", "intest1.i", 2)
-#print(searchWord("elizabeth", "intest1.i", 10))
+# createIndex("findex.i", WORDS, EPISODES)
+# indexFile("./oneline/2024-2-6.txt", "intest1.i", 1)
+# indexFile("./oneline/2024-2-9.txt", "intest1.i", 2)
+# indexFile("./oneline/2024-2-9.txt", "intest1.i", 3)
+# indexFile("./oneline/2024-2-9.txt", "intest1.i", 4)
+# indexFile("./oneline/2024-2-9.txt", "intest1.i", 5)
+# print(searchWord("elizabeth", "intest1.i", 10))
