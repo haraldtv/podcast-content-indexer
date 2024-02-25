@@ -15,13 +15,16 @@ This project uses OpenAI whisper to transcribe podcast episodes (or other audio)
 ## Features
 ### C library
 - Indexing of text file content (the transcribed audio)
-- Checking if a file contains a specified word
-- Checking what files contains a specified word
+- Checking if an episode contains a specified word
+- Checking what episodes contain a specified word
+
+Note: There are some significant improvements to be made to the indexer in terms of both indexing and lookup speed
 ### Python script
 - Call the c library functions in a nicer cli style frontend
 - Search for multiple words by calling the c library multiple times
 - Searching based on the proximity of keywords.
   - Checks whether a file contains the given query, and if the words are in proximity to each other. Should result in more relevant searches
+
 Note: I'm planning on porting some of the python search functions to the C library in the future for better performance
 
 ## Performance
