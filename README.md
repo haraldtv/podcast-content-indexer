@@ -30,7 +30,7 @@ Will update with performance at a later time, but some very quick testing gives 
 ## TODO
 The most important steps at the moment are automating the transcription process fully, and implementing a few ideas for the searching algorithm. In the future the indexing of files might be multithreaded, which should improve the indexing time drastically for larger datasets.
 
-## Use (this section is not currently being kept up to date, due to rapid changes)
+## Use (this section is not currently being kept up to date due to rapid changes in the code)
 > python3 main.py [arguments]
 
 ### Arguments
